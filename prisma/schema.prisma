@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  walletAddress      String   @unique
+  role               String   @default("citizen")
+  totalRewardsEarned Int      @default(0)
+  registeredAt       DateTime @default(now())
+
+  pickupRequests PickupRequest[] @relation("UserRequests")
+  collections    Collection[]    @relation("CollectorCollections")
+  rewardsLedger  RewardsLedger[]
+}
+
+model PickupRequest {
+  id              String    @id @default(cuid())
+  address         String
+  materialType    String
+  estimatedWeight Float
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now())
+  collectedAt     DateTime?
+
+  user        User    @relation("UserRequests", fields: [userId], references: [id])
+  userId      String
+  collector   User?   @relation("CollectorCollections", fields: [collectorId], references: [id])
+  collectorId String?
+
+  collection Collection?
+}
+
+model Collection {
+  id               String   @id @default(cuid())
+  verifiedWeight   Float
+  verifiedMaterial String
+  rewardAmount     Int
+  fiberTxHash      String?
+  completedAt      DateTime @default(now())
+
+  request     PickupRequest @relation(fields: [requestId], references: [id])
+  requestId   String        @unique
+  collector   User          @relation(fields: [collectorId], references: [id])
+  collectorId String
+
+  rewardsLedger RewardsLedger?
+}
+
+model RewardsLedger {
+  id          String   @id @default(cuid())
+  amount      Int
+  fiberTxHash String?
+  createdAt   DateTime @default(now())
+
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  collectionId String     @unique
+}
