@@ -21,6 +21,7 @@ This project is under development. The current home page is a placeholder. The d
 - Prisma with SQLite
 - Nervos CKB connector packages
 - Tailwindcss
+- Schadcn
 
 ## Run locally
 
