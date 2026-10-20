@@ -20,6 +20,7 @@ This project is under development. The current home page is a placeholder. The d
 - Next.js 16, React 19, and TypeScript
 - Prisma with SQLite
 - Nervos CKB connector packages
+- Tailwindcss
 
 ## Run locally
 
